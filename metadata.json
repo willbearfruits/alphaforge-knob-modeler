@@ -1,0 +1,5 @@
+{
+  "name": "AlphaForge: AI Knob Modeler",
+  "description": "A parametric 3D modeler for potentiometer knobs with AI generation, STL export, and slice preview capabilities.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,103 @@
+{
+  "name": "alphaforge-ai-knob-modeler",
+  "private": true,
+  "version": "1.0.0",
+  "description": "AI-Powered 3D Knob Designer for 3D Printing",
+  "author": "AlphaForge",
+  "homepage": "https://github.com/alphaforge/knob-modeler",
+  "type": "module",
+  "main": "electron.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:clean": "rm -rf dist dist-electron",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && NODE_ENV=development electron .\"",
+    "electron:build": "npm run build:clean && npm run build && electron-builder",
+    "electron:build:win": "npm run build:clean && npm run build && electron-builder --win",
+    "electron:build:mac": "npm run build:clean && npm run build && electron-builder --mac",
+    "electron:build:linux": "npm run build:clean && npm run build && electron-builder --linux",
+    "electron:build:all": "npm run build:clean && npm run build && electron-builder -mwl"
+  },
+  "build": {
+    "appId": "com.alphaforge.knobmodeler",
+    "productName": "AlphaForge Knob Modeler",
+    "directories": {
+      "output": "dist-electron",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron.cjs",
+      "preload.cjs",
+      "package.json",
+      "!**/*.map"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AlphaForge Knob Modeler"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.graphics-design"
+    },
+    "dmg": {
+      "title": "AlphaForge Knob Modeler"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Graphics",
+      "icon": "build/icons/",
+      "maintainer": "AlphaForge"
+    }
+  },
+  "dependencies": {
+    "@google/genai": "^1.30.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.4.0",
+    "dotenv": "^17.2.3",
+    "electron-log": "^5.4.3",
+    "lucide-react": "^0.554.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "three": "^0.181.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.2.1",
+    "electron": "^39.2.3",
+    "electron-builder": "^26.0.12",
+    "electron-icon-builder": "^2.0.1",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0",
+    "wait-on": "^9.0.3"
+  }
+}
