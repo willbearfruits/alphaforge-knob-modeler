@@ -32,7 +32,7 @@ Transform your ideas into custom 3D-printable knobs using natural language and A
 - [AppImage](../../releases/download/v1.0.4/AlphaForge.Knob.Modeler-1.0.4.AppImage) (Portable)
 
 #### Android
-- [APK (Debug)](../../releases/download/v1.0.4/AlphaForge-Knob-Modeler-Debug.apk) - *Enable "Unknown Sources" to install*
+- [APK (Signed)](../../releases/download/v1.0.4/AlphaForge-Knob-Modeler.apk) - *Enable "Unknown Sources" to install*
 
 #### macOS
 - Coming soon
