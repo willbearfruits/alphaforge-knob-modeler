@@ -1,11 +1,14 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const log = require('electron-log');
+const { autoUpdater } = require('electron-updater');
 require('dotenv').config();
 
 // Configure logging
 log.transports.file.level = 'info';
 log.transports.console.level = 'debug';
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
@@ -15,6 +18,10 @@ log.info('AlphaForge starting...');
 log.info('Version:', app.getVersion());
 log.info('Platform:', process.platform);
 log.info('Development mode:', isDev);
+
+// Auto-updater configuration
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
 
 // Handle AI generation securely in main process
 ipcMain.handle('generate-knob-params', async (event, description) => {
@@ -110,6 +117,14 @@ app.whenReady().then(() => {
   log.info('App ready, creating window');
   createWindow();
 
+  // Check for updates after window is created (only in production)
+  if (!isDev) {
+    setTimeout(() => {
+      log.info('Checking for updates...');
+      autoUpdater.checkForUpdates();
+    }, 3000);
+  }
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       log.info('Activating - creating new window');
@@ -127,6 +142,69 @@ app.on('window-all-closed', () => {
 
 app.on('will-quit', () => {
   log.info('App quitting');
+});
+
+// Auto-updater event handlers
+autoUpdater.on('checking-for-update', () => {
+  log.info('Checking for update...');
+  if (mainWindow) mainWindow.webContents.send('update-checking');
+});
+
+autoUpdater.on('update-available', (info) => {
+  log.info('Update available:', info.version);
+  if (mainWindow) mainWindow.webContents.send('update-available', info);
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  log.info('Update not available:', info.version);
+  if (mainWindow) mainWindow.webContents.send('update-not-available', info);
+});
+
+autoUpdater.on('error', (err) => {
+  log.error('Error in auto-updater:', err);
+  if (mainWindow) mainWindow.webContents.send('update-error', err);
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  let logMessage = 'Download speed: ' + progressObj.bytesPerSecond;
+  logMessage = logMessage + ' - Downloaded ' + progressObj.percent + '%';
+  logMessage = logMessage + ' (' + progressObj.transferred + '/' + progressObj.total + ')';
+  log.info(logMessage);
+  if (mainWindow) mainWindow.webContents.send('update-download-progress', progressObj);
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  log.info('Update downloaded:', info.version);
+  if (mainWindow) mainWindow.webContents.send('update-downloaded', info);
+});
+
+// IPC handlers for update actions
+ipcMain.handle('check-for-updates', async () => {
+  if (isDev) {
+    log.info('Update check skipped in development mode');
+    return { available: false, message: 'Updates disabled in development' };
+  }
+  try {
+    const result = await autoUpdater.checkForUpdates();
+    return { available: true, updateInfo: result.updateInfo };
+  } catch (error) {
+    log.error('Update check failed:', error);
+    return { available: false, error: error.message };
+  }
+});
+
+ipcMain.handle('download-update', async () => {
+  try {
+    await autoUpdater.downloadUpdate();
+    return { success: true };
+  } catch (error) {
+    log.error('Update download failed:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('install-update', () => {
+  autoUpdater.quitAndInstall(false, true);
 });
 
 // Global error handlers

@@ -4,12 +4,12 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, Grid, Center } from '@react-three/drei';
 import * as THREE from 'three';
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js';
-import { 
-  Download, 
-  Cpu, 
-  Layers, 
-  Settings2, 
-  Wand2, 
+import {
+  Download,
+  Cpu,
+  Layers,
+  Settings2,
+  Wand2,
   Loader2,
   Box,
   Circle,
@@ -18,10 +18,14 @@ import {
 } from 'lucide-react';
 
 import KnobMesh from './components/KnobMesh';
+import SplashScreen from './components/SplashScreen';
+import DonationButton from './components/DonationButton';
+import UpdateNotification from './components/UpdateNotification';
 import { DEFAULT_KNOB, KnobParameters, KnobShape, ShaftType } from './types';
 import { generateKnobParams } from './services/geminiService';
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [params, setParams] = useState<KnobParameters>(DEFAULT_KNOB);
   const [activeTab, setActiveTab] = useState<'design' | 'slicer'>('design');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -91,9 +95,13 @@ export default function App() {
     setExportMenuOpen(false);
   };
 
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
   return (
     <div className="flex h-screen w-full bg-gray-950 text-gray-200 overflow-hidden font-sans">
-      
+
       {/* Sidebar Controls */}
       <aside className="w-96 flex flex-col border-r border-gray-800 bg-gray-900/50 backdrop-blur-sm h-full overflow-hidden">
         
@@ -103,12 +111,18 @@ export default function App() {
             <Cpu className="w-6 h-6 text-cyan-400" />
             <h1 className="text-xl font-bold tracking-tight text-white">AlphaForge</h1>
           </div>
-          <p className="text-xs text-gray-500 font-mono">PARAMETRIC MODELER v1.2</p>
+          <p className="text-xs text-gray-500 font-mono">PARAMETRIC MODELER v1.0.0 BETA</p>
         </div>
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-5 space-y-8 custom-scrollbar">
-          
+
+          {/* Update Notification */}
+          <UpdateNotification />
+
+          {/* Donation Section */}
+          <DonationButton />
+
           {/* AI Generator Section */}
           <div className="space-y-3 bg-gray-800/40 p-4 rounded-xl border border-gray-700/50">
             <label className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
