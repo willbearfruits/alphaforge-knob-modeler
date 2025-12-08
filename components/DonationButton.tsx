@@ -6,7 +6,7 @@ export default function DonationButton() {
 
   const handleDonate = () => {
     // Direct PayPal payment link with email
-    window.open('https://www.paypal.com/paypalme/dogme84', '_blank');
+    window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dogme84@gmail.com&item_name=AlphaForge+Knob+Modeler&currency_code=USD', '_blank');
   };
 
   if (!visible) return null;
