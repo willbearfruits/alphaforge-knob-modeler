@@ -51,19 +51,19 @@ Transform your ideas into custom 3D-printable knobs using natural language and A
 AlphaForge is currently in early development. While fully functional, you may encounter bugs or rough edges.
 
 ### Known Issues
-- **Shaft Diameter Accuracy:** The hole diameter for the shaft may be slightly tight or loose depending on your printer's calibration. We are aware that the tolerance calculation needs adjustment.
+- **Shaft Diameter Accuracy:** The hole diameter for the shaft may be slightly tight or loose depending on your printer's calibration. I am aware that the tolerance calculation needs adjustment.
 - **Workaround:** For now, you can slightly adjust the "Shaft Diameter" slider in the "Shaft Fit" section to compensate for your printer's tolerance (e.g., add 0.2mm - 0.4mm).
 
 ---
 
 ## Contributing & Help Wanted
 
-We are a small open-source project and **help is very welcome!**
+I am an independent open-source developer and **help is very welcome!**
 
 If you are a developer, 3D printing enthusiast, or UI/UX designer, here is how you can help:
 - **Test:** Download the app, print some knobs, and report your results.
 - **Code:** Check the "Issues" tab for bugs or feature requests.
-- **Documentation:** Improve our guides and examples.
+- **Documentation:** Improve my guides and examples.
 
 Feel free to open an issue or submit a pull request!
 
@@ -71,22 +71,26 @@ Feel free to open an issue or submit a pull request!
 
 ## Installation
 
+### Windows
+
+1. Download the **Setup** `.exe` file from the [latest release](../../releases/latest).
+2. Run the installer.
+3. The app will launch automatically.
+4. (Optional) You can also use the **Portable** version if you prefer not to install it.
+
 ### Linux
 
 **AppImage (Recommended)**
 ```bash
-# Download and make executable
-chmod +x AlphaForge-Knob-Modeler-1.0.0.AppImage
-./AlphaForge-Knob-Modeler-1.0.0.AppImage
+# Download and make executable (replace version number with latest)
+chmod +x AlphaForge.Knob.Modeler-1.0.2.AppImage
+./AlphaForge.Knob.Modeler-1.0.2.AppImage
 ```
 
 **Debian/Ubuntu (.deb)**
 ```bash
-sudo dpkg -i alphaforge-ai-knob-modeler_1.0.0_amd64.deb
+sudo dpkg -i alphaforge-ai-knob-modeler_1.0.2_amd64.deb
 ```
-
-### Windows
-Coming soon
 
 ### macOS
 Coming soon
@@ -197,9 +201,10 @@ alphaforge-knob-modeler/
 
 ## Roadmap
 
-- [ ] Windows and macOS builds
+- [x] Windows builds
+- [ ] macOS builds
 - [ ] Code signing for trusted distribution
-- [ ] Auto-updates via GitHub Releases
+- [x] Auto-updates via GitHub Releases
 - [ ] Save/Load project files (.knob format)
 - [ ] Additional export formats (OBJ, 3MF)
 - [ ] Keyboard shortcuts (Ctrl+S, Ctrl+E)
