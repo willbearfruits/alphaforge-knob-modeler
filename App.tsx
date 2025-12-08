@@ -1,5 +1,4 @@
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, Grid, Center } from '@react-three/drei';
 import * as THREE from 'three';
@@ -14,7 +13,8 @@ import {
   Box,
   Circle,
   Hammer,
-  ChevronDown
+  ChevronDown,
+  Key
 } from 'lucide-react';
 
 import KnobMesh from './components/KnobMesh';
@@ -32,8 +32,28 @@ export default function App() {
   const [prompt, setPrompt] = useState('');
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   
+  // Mobile/Web API Key State
+  const [isMobile, setIsMobile] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  
   // Reference to the entire knob group
   const groupRef = useRef<THREE.Group | null>(null);
+
+  useEffect(() => {
+    // Check if we are in Electron or Web/Mobile
+    if (!window.electronAPI) {
+      setIsMobile(true);
+      const storedKey = localStorage.getItem('gemini_api_key');
+      if (storedKey) setApiKey(storedKey);
+    }
+  }, []);
+
+  const saveApiKey = (key: string) => {
+    setApiKey(key);
+    localStorage.setItem('gemini_api_key', key);
+    setShowApiKeyModal(false);
+  };
 
   const handleUpdateParam = (key: keyof KnobParameters, value: any) => {
     setParams(prev => ({ ...prev, [key]: value }));
@@ -41,12 +61,19 @@ export default function App() {
 
   const handleAiGenerate = async () => {
     if (!prompt.trim()) return;
+    
+    // In mobile mode, require API key
+    if (isMobile && !apiKey) {
+      setShowApiKeyModal(true);
+      return;
+    }
+
     setIsGenerating(true);
     try {
-      const newParams = await generateKnobParams(prompt);
+      const newParams = await generateKnobParams(prompt, apiKey);
       setParams(prev => ({ ...prev, ...newParams }));
     } catch (e) {
-      alert("Failed to generate parameters. Ensure API Key is set.");
+      alert("Failed to generate parameters. " + (isMobile ? "Check your API Key." : "Ensure API Key is set."));
     } finally {
       setIsGenerating(false);
     }
@@ -100,34 +127,161 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen w-full bg-gray-950 text-gray-200 overflow-hidden font-sans">
+    <div className="flex flex-col md:flex-row h-screen w-full bg-gray-950 text-gray-200 overflow-hidden font-sans">
+    
+      {/* API Key Modal for Mobile/Web */}
+      {showApiKeyModal && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <Key className="w-5 h-5 text-cyan-400" />
+              Enter Gemini API Key
+            </h3>
+            <p className="text-sm text-gray-400">
+              To use AI generation features on this device, you need to provide your own Google Gemini API Key.
+              It will be stored locally on your device.
+            </p>
+            <input
+              type="password"
+              placeholder="Paste your API Key here"
+              className="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-cyan-500 outline-none"
+              onChange={(e) => setApiKey(e.target.value)}
+              value={apiKey}
+            />
+            <div className="flex gap-2 justify-end">
+              <button 
+                onClick={() => setShowApiKeyModal(false)}
+                className="px-4 py-2 text-gray-400 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => saveApiKey(apiKey)}
+                className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-semibold"
+              >
+                Save Key
+              </button>
+            </div>
+            <p className="text-xs text-gray-600">
+              Get a key at <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-cyan-500 hover:underline">aistudio.google.com</a>
+            </p>
+          </div>
+        </div>
+      )}
 
-      {/* Sidebar Controls */}
-      <aside className="w-96 flex flex-col border-r border-gray-800 bg-gray-900/50 backdrop-blur-sm h-full overflow-hidden">
+      {/* Main Viewport (Top on Mobile, Right on Desktop) */}
+      <main className="order-1 md:order-2 flex-1 relative bg-gradient-to-br from-gray-900 to-gray-950 flex flex-col h-[40vh] md:h-auto">
+        
+        {/* Toolbar */}
+        <div className="absolute top-4 left-4 z-10 flex gap-2">
+           <div className="bg-gray-800/80 backdrop-blur rounded-lg p-1 border border-gray-700 flex">
+              <button 
+                onClick={() => setActiveTab('design')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-2 transition-all ${
+                  activeTab === 'design' ? 'bg-gray-700 text-white shadow-sm' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Settings2 className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Design</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('slicer')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-2 transition-all ${
+                  activeTab === 'slicer' ? 'bg-gray-700 text-white shadow-sm' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Slicer</span>
+              </button>
+           </div>
+        </div>
+
+        <div className="flex-1 relative">
+           <Canvas shadows camera={{ position: [25, 25, 25], fov: 45 }}>
+              <color attach="background" args={['#111827']} />
+              
+              <Stage intensity={0.5} environment="city" adjustCamera={false}>
+                <Center top>
+                  <KnobMesh 
+                    params={params} 
+                    groupRef={groupRef} 
+                    isSliceView={activeTab === 'slicer'}
+                  />
+                </Center>
+              </Stage>
+              
+              {activeTab === 'slicer' && (
+                 <SlicerVisuals params={params} />
+              )}
+
+              <Grid 
+                renderOrder={-1} 
+                position={[0, 0, 0]} 
+                infiniteGrid 
+                cellSize={1} 
+                sectionSize={10} 
+                fadeDistance={50} 
+                sectionColor="#334155" 
+                cellColor="#1e293b" 
+              />
+              <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 1.75} />
+              <axesHelper args={[20]} />
+           </Canvas>
+
+           {/* Overlay Info */}
+           <div className="absolute bottom-6 right-6 text-right pointer-events-none select-none">
+             <div className="text-4xl md:text-6xl font-black text-gray-800/50">{params.diameter}mm</div>
+             <div className="text-xs md:text-sm text-gray-600 font-mono mt-1">
+               {params.shape.toUpperCase()} // {params.shaftType.toUpperCase()}
+             </div>
+           </div>
+        </div>
+      </main>
+
+      {/* Sidebar Controls (Bottom on Mobile, Left on Desktop) */}
+      <aside className="order-2 md:order-1 w-full md:w-96 flex flex-col border-t md:border-t-0 md:border-r border-gray-800 bg-gray-900/50 backdrop-blur-sm h-[60vh] md:h-full overflow-hidden">
         
         {/* Header */}
-        <div className="p-5 border-b border-gray-800">
-          <div className="flex items-center gap-2 mb-1">
-            <Cpu className="w-6 h-6 text-cyan-400" />
-            <h1 className="text-xl font-bold tracking-tight text-white">AlphaForge</h1>
+        <div className="p-4 md:p-5 border-b border-gray-800 flex justify-between items-center md:block">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Cpu className="w-5 h-5 md:w-6 md:h-6 text-cyan-400" />
+              <h1 className="text-lg md:text-xl font-bold tracking-tight text-white">AlphaForge</h1>
+            </div>
+            <p className="text-[10px] md:text-xs text-gray-500 font-mono">PARAMETRIC MODELER v1.0.4</p>
           </div>
-          <p className="text-xs text-gray-500 font-mono">PARAMETRIC MODELER v1.0.0 BETA</p>
+          
+          {/* Export Button (Mobile Header Shortcut) */}
+          <button 
+            onClick={() => setExportMenuOpen(!exportMenuOpen)}
+            className="md:hidden bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-md"
+          >
+            <Download className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-6 md:space-y-8 custom-scrollbar pb-20 md:pb-5">
 
           {/* Update Notification */}
-          <UpdateNotification />
+          <div className="hidden md:block"><UpdateNotification /></div>
 
           {/* Donation Section */}
           <DonationButton />
 
           {/* AI Generator Section */}
           <div className="space-y-3 bg-gray-800/40 p-4 rounded-xl border border-gray-700/50">
-            <label className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
-              <Wand2 className="w-3 h-3" /> AI Assistant
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                <Wand2 className="w-3 h-3" /> AI Assistant
+              </label>
+              {isMobile && (
+                <button 
+                  onClick={() => setShowApiKeyModal(true)}
+                  className="text-xs text-gray-500 hover:text-cyan-400 flex items-center gap-1"
+                >
+                  <Key className="w-3 h-3" /> {apiKey ? 'Key Set' : 'Set Key'}
+                </button>
+              )}
+            </div>
             <div className="flex gap-2">
               <input 
                 type="text" 
@@ -266,8 +420,8 @@ export default function App() {
           </section>
         </div>
 
-        {/* Footer Actions */}
-        <div className="p-4 border-t border-gray-800 bg-gray-900">
+        {/* Footer Actions (Desktop Only, Mobile uses Header shortcut or Menu) */}
+        <div className="hidden md:block p-4 border-t border-gray-800 bg-gray-900">
           <div className="relative">
             <button 
               onClick={() => setExportMenuOpen(!exportMenuOpen)}
@@ -304,74 +458,44 @@ export default function App() {
             )}
           </div>
         </div>
-      </aside>
-
-      {/* Main Viewport */}
-      <main className="flex-1 relative bg-gradient-to-br from-gray-900 to-gray-950 flex flex-col">
         
-        {/* Toolbar */}
-        <div className="absolute top-4 left-4 z-10 flex gap-2">
-           <div className="bg-gray-800/80 backdrop-blur rounded-lg p-1 border border-gray-700 flex">
-              <button 
-                onClick={() => setActiveTab('design')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-2 transition-all ${
-                  activeTab === 'design' ? 'bg-gray-700 text-white shadow-sm' : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Settings2 className="w-3.5 h-3.5" /> Design
-              </button>
-              <button 
-                onClick={() => setActiveTab('slicer')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-2 transition-all ${
-                  activeTab === 'slicer' ? 'bg-gray-700 text-white shadow-sm' : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5" /> Slicer Preview
-              </button>
+        {/* Mobile Export Menu Overlay */}
+        {isMobile && exportMenuOpen && (
+           <div className="fixed inset-0 z-50 bg-black/80 flex items-end justify-center md:hidden" onClick={() => setExportMenuOpen(false)}>
+              <div className="bg-gray-900 w-full rounded-t-xl p-4 space-y-2" onClick={e => e.stopPropagation()}>
+                 <h3 className="text-white font-bold mb-4 text-center">Export Options</h3>
+                 <button 
+                  onClick={() => handleExportSTL('all')}
+                  className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold"
+                >
+                  Export All (Assembly)
+                </button>
+                {params.hasCap && (
+                  <>
+                    <button 
+                      onClick={() => handleExportSTL('body')}
+                      className="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold"
+                    >
+                      Export Body Only
+                    </button>
+                    <button 
+                      onClick={() => handleExportSTL('cap')}
+                      className="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold"
+                    >
+                      Export Cap Only
+                    </button>
+                  </>
+                )}
+                <button 
+                  onClick={() => setExportMenuOpen(false)}
+                  className="w-full py-3 text-gray-500"
+                >
+                  Cancel
+                </button>
+              </div>
            </div>
-        </div>
-
-        <div className="flex-1 relative">
-           <Canvas shadows camera={{ position: [25, 25, 25], fov: 45 }}>
-              <color attach="background" args={['#111827']} />
-              
-              <Stage intensity={0.5} environment="city" adjustCamera={false}>
-                <Center top>
-                  <KnobMesh 
-                    params={params} 
-                    groupRef={groupRef} 
-                    isSliceView={activeTab === 'slicer'}
-                  />
-                </Center>
-              </Stage>
-              
-              {activeTab === 'slicer' && (
-                 <SlicerVisuals params={params} />
-              )}
-
-              <Grid 
-                renderOrder={-1} 
-                position={[0, 0, 0]} 
-                infiniteGrid 
-                cellSize={1} 
-                sectionSize={10} 
-                fadeDistance={50} 
-                sectionColor="#334155" 
-                cellColor="#1e293b" 
-              />
-              <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 1.75} />
-              <axesHelper args={[20]} />
-           </Canvas>
-
-           {/* Overlay Info */}
-           <div className="absolute bottom-6 right-6 text-right pointer-events-none select-none">
-             <div className="text-6xl font-black text-gray-800/50">{params.diameter}mm</div>
-             <div className="text-sm text-gray-600 font-mono mt-1">
-               {params.shape.toUpperCase()} // {params.shaftType.toUpperCase()}
-             </div>
-           </div>
-        </div>
-      </main>
+        )}
+      </aside>
     </div>
   );
 }

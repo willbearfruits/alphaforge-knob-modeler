@@ -22,14 +22,17 @@ Transform your ideas into custom 3D-printable knobs using natural language and A
 
 ## Download
 
-### Latest Release: v1.0.2
+### Latest Release: v1.0.4
 
 #### Windows
-- [Installer (.exe)](../../releases/download/v1.0.2/AlphaForge.Knob.Modeler.Setup.1.0.2.exe) (Recommended)
-- [Portable (.exe)](../../releases/download/v1.0.2/AlphaForge.Knob.Modeler.1.0.2.exe)
+- [Installer (.exe)](../../releases/download/v1.0.4/AlphaForge.Knob.Modeler.Setup.1.0.4.exe) (Recommended)
+- [Portable (.exe)](../../releases/download/v1.0.4/AlphaForge.Knob.Modeler.1.0.4.exe)
 
 #### Linux
-- [AppImage](../../releases/download/v1.0.2/AlphaForge.Knob.Modeler-1.0.2.AppImage) (Portable)
+- [AppImage](../../releases/download/v1.0.4/AlphaForge.Knob.Modeler-1.0.4.AppImage) (Portable)
+
+#### Android
+- [APK (Debug)](../../releases/download/v1.0.4/AlphaForge-Knob-Modeler-Debug.apk) - *Enable "Unknown Sources" to install*
 
 #### macOS
 - Coming soon

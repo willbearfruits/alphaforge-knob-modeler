@@ -1,7 +1,7 @@
 {
   "name": "alphaforge-ai-knob-modeler",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "AI-Powered 3D Knob Designer for 3D Printing",
   "author": "AlphaForge",
   "homepage": "https://github.com/alphaforge/knob-modeler",
@@ -99,7 +99,11 @@
     }
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/cli": "^7.4.4",
+    "@capacitor/core": "^7.4.4",
     "@google/genai": "^1.30.0",
+    "@google/generative-ai": "^0.24.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.0",
     "dotenv": "^17.2.3",
