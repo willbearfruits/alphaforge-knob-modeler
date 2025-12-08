@@ -20,17 +20,42 @@ Transform your ideas into custom 3D-printable knobs using natural language and A
 
 ## Download
 
-### Latest Release: v1.0.0
-
-#### Linux
-- [AppImage](../../releases/download/v1.0.0/AlphaForge-Knob-Modeler-1.0.0.AppImage) (134 MB) - Portable, runs anywhere
-- [.deb Package](../../releases/download/v1.0.0/alphaforge-ai-knob-modeler_1.0.0_amd64.deb) (85 MB) - Ubuntu/Debian installer
+### Latest Release: v1.0.1
 
 #### Windows
-- Coming soon
+- [Installer (.exe)](../../releases/download/v1.0.1/AlphaForge.Knob.Modeler.Setup.1.0.1.exe) (Recommended)
+- [Portable (.exe)](../../releases/download/v1.0.1/AlphaForge.Knob.Modeler.1.0.1.exe)
+
+#### Linux
+- [AppImage](../../releases/download/v1.0.1/AlphaForge.Knob.Modeler-1.0.1.AppImage) (Portable)
 
 #### macOS
 - Coming soon
+
+---
+
+## Important Notice
+
+**⚠️ This is a Beta/Initial Release (v1.0.x)**
+
+AlphaForge is currently in early development. While fully functional, you may encounter bugs or rough edges.
+
+### Known Issues
+- **Shaft Diameter Accuracy:** The hole diameter for the shaft may be slightly tight or loose depending on your printer's calibration. We are aware that the tolerance calculation needs adjustment.
+- **Workaround:** For now, you can slightly adjust the "Shaft Diameter" slider in the "Shaft Fit" section to compensate for your printer's tolerance (e.g., add 0.2mm - 0.4mm).
+
+---
+
+## Contributing & Help Wanted
+
+We are a small open-source project and **help is very welcome!**
+
+If you are a developer, 3D printing enthusiast, or UI/UX designer, here is how you can help:
+- **Test:** Download the app, print some knobs, and report your results.
+- **Code:** Check the "Issues" tab for bugs or feature requests.
+- **Documentation:** Improve our guides and examples.
+
+Feel free to open an issue or submit a pull request!
 
 ---
 
