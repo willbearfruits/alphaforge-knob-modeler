@@ -13,26 +13,28 @@ Transform your ideas into custom 3D-printable knobs using natural language and A
 - **AI-Powered Design**: Describe your knob in plain English and let AI generate the 3D model
 - **Real-Time 3D Preview**: Interactive visualization with rotation, zoom, and lighting controls
 - **Parametric Controls**: Fine-tune dimensions like diameter, height, grip style, and shaft size
+- **Light/Dark Mode**: Toggle between light and dark themes for comfortable use in any environment
 - **STL Export**: Export ready-to-print STL files for your 3D printer
 - **Cross-Platform**: Runs on Windows, macOS, and Linux
 - **Secure**: API keys are safely stored in the main process, never exposed to frontend code
-- **Production-Ready**: Built with Electron, memory-optimized, and professionally packaged
+- **Production-Ready**: Built with Electron, memory-optimized, error handling, and professionally packaged
+- **Accessible**: Improved keyboard navigation and mobile-friendly touch targets
 
 ---
 
 ## Download
 
-### Latest Release: v1.0.4
+### Latest Release: v1.1.0
 
 #### Windows
-- [Installer (.exe)](../../releases/download/v1.0.4/AlphaForge.Knob.Modeler.Setup.1.0.4.exe) (Recommended)
-- [Portable (.exe)](../../releases/download/v1.0.4/AlphaForge.Knob.Modeler.1.0.4.exe)
+- [Installer (.exe)](../../releases/download/v1.1.0/AlphaForge.Knob.Modeler.Setup.1.1.0.exe) (Recommended)
+- [Portable (.exe)](../../releases/download/v1.1.0/AlphaForge.Knob.Modeler.1.1.0.exe)
 
 #### Linux
-- [AppImage](../../releases/download/v1.0.4/AlphaForge.Knob.Modeler-1.0.4.AppImage) (Portable)
+- [AppImage](../../releases/download/v1.1.0/AlphaForge.Knob.Modeler-1.1.0.AppImage) (Portable)
 
 #### Android
-- [APK (Signed)](../../releases/download/v1.0.4/AlphaForge-Knob-Modeler.apk) - *Enable "Unknown Sources" to install*
+- [APK (Signed)](../../releases/download/v1.1.0/AlphaForge-Knob-Modeler.apk) - *Enable "Unknown Sources" to install*
 
 #### macOS
 - Coming soon
@@ -47,15 +49,20 @@ Transform your ideas into custom 3D-printable knobs using natural language and A
 
 ---
 
-## Important Notice
+## What's New in v1.1.0
 
-**⚠️ This is a Beta/Initial Release (v1.0.x)**
-
-AlphaForge is currently in early development. While fully functional, you may encounter bugs or rough edges.
+### Major Improvements
+- **🌓 Light/Dark Mode**: Full theme support with seamless switching
+- **🛡️ Enhanced Security**: Removed API key exposure vulnerabilities
+- **⚡ Performance Optimizations**: Memoized validation functions and improved rendering
+- **♿ Accessibility**: Better ARIA labels and 44px minimum touch targets for mobile
+- **🎨 UI Polish**: Theme-aware tooltips, toasts, and modals
+- **🐛 Memory Management**: Fixed geometry disposal to prevent memory leaks
+- **💪 Production Ready**: Error boundaries and graceful error handling
 
 ### Known Issues
-- **Shaft Diameter Accuracy:** The hole diameter for the shaft may be slightly tight or loose depending on your printer's calibration. I am aware that the tolerance calculation needs adjustment.
-- **Workaround:** For now, you can slightly adjust the "Shaft Diameter" slider in the "Shaft Fit" section to compensate for your printer's tolerance (e.g., add 0.2mm - 0.4mm).
+- **Shaft Diameter Accuracy:** The hole diameter for the shaft may be slightly tight or loose depending on your printer's calibration. Tolerance calculation needs adjustment.
+- **Workaround:** Slightly adjust the "Shaft Diameter" slider in the "Shaft Fit" section to compensate for your printer's tolerance (e.g., add 0.2mm - 0.4mm).
 
 ---
 
@@ -86,13 +93,13 @@ Feel free to open an issue or submit a pull request!
 **AppImage (Recommended)**
 ```bash
 # Download and make executable (replace version number with latest)
-chmod +x AlphaForge.Knob.Modeler-1.0.2.AppImage
-./AlphaForge.Knob.Modeler-1.0.2.AppImage
+chmod +x AlphaForge.Knob.Modeler-1.1.0.AppImage
+./AlphaForge.Knob.Modeler-1.1.0.AppImage
 ```
 
 **Debian/Ubuntu (.deb)**
 ```bash
-sudo dpkg -i alphaforge-ai-knob-modeler_1.0.2_amd64.deb
+sudo dpkg -i alphaforge-ai-knob-modeler_1.1.0_amd64.deb
 ```
 
 ### macOS
@@ -193,12 +200,14 @@ alphaforge-knob-modeler/
 
 ---
 
-## Memory Management
+## Memory Management & Performance
 
-- Automatic Three.js geometry disposal
+- Automatic Three.js geometry and material disposal
 - URL object cleanup after exports
 - Proper React cleanup hooks
+- Memoized validation functions
 - Production-tested for long-running sessions
+- Error boundaries to catch and handle rendering errors gracefully
 
 ---
 

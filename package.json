@@ -1,7 +1,7 @@
 {
   "name": "alphaforge-ai-knob-modeler",
   "private": true,
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "AI-Powered 3D Knob Designer for 3D Printing",
   "author": "AlphaForge",
   "homepage": "https://github.com/alphaforge/knob-modeler",
@@ -23,6 +23,8 @@
   "build": {
     "appId": "com.alphaforge.knobmodeler",
     "productName": "AlphaForge Knob Modeler",
+    "compression": "maximum",
+    "asar": true,
     "directories": {
       "output": "dist-electron",
       "buildResources": "build"
@@ -102,8 +104,8 @@
     "@capacitor/android": "^7.4.4",
     "@capacitor/cli": "^7.4.4",
     "@capacitor/core": "^7.4.4",
-    "@google/genai": "^1.30.0",
     "@google/generative-ai": "^0.24.1",
+    "@react-three/csg": "^4.0.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.0",
     "dotenv": "^17.2.3",
@@ -112,7 +114,8 @@
     "lucide-react": "^0.554.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "three": "^0.181.2"
+    "three": "^0.181.2",
+    "three-bvh-csg": "^0.0.17"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
@@ -121,6 +124,7 @@
     "electron": "^39.2.3",
     "electron-builder": "^26.0.12",
     "electron-icon-builder": "^2.0.1",
+    "terser": "^5.44.1",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
     "wait-on": "^9.0.3"

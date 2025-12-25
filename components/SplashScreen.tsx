@@ -57,7 +57,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
         {/* Version & Status */}
         <div className="text-xs text-gray-600 space-y-1">
-          <p className="font-mono">v1.0.0 BETA</p>
+          <p className="font-mono">v1.1.0</p>
           <p className="text-gray-700">Free & Open Source</p>
         </div>
       </div>

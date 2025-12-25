@@ -41,6 +41,7 @@ export interface KnobParameters {
   shaftDiameter: number; // Usually 6mm or 6.35mm
   shaftDepth: number;
   dFlatSize: number; // Distance from Flat to Opposite side (e.g. 4.5mm for 6mm shaft)
+  holeTolerance: number; // Extra clearance for 3D printing (e.g. 0.1mm)
 }
 
 export const DEFAULT_KNOB: KnobParameters = {
@@ -64,4 +65,5 @@ export const DEFAULT_KNOB: KnobParameters = {
   shaftDiameter: 6.0,
   shaftDepth: 14,
   dFlatSize: 4.5, // Standard Alpha D-Shaft
+  holeTolerance: 0.15,
 };

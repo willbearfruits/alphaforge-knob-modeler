@@ -1,0 +1,10 @@
+[
+  { "name": "1590A", "width": 39, "height": 31, "length": 93, "desc": "Micro Pedal" },
+  { "name": "1590B", "width": 60, "height": 31, "length": 112, "desc": "Standard Pedal" },
+  { "name": "1590BB", "width": 94, "height": 34, "length": 119, "desc": "Large/Dual Pedal" },
+  { "name": "1590BS", "width": 66, "height": 41, "length": 120, "desc": "Standard Tall" },
+  { "name": "1590DD", "width": 119, "height": 56, "length": 187, "desc": "Double Wide" },
+  { "name": "1590N1", "width": 66, "height": 40, "length": 121, "desc": "Narrow Tall" },
+  { "name": "125B", "width": 121, "height": 39, "length": 121, "desc": "Square/Large" },
+  { "name": "1790NS", "width": 121, "height": 39, "length": 145, "desc": "Extra Large" }
+]

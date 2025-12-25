@@ -76,43 +76,43 @@ const KnobMesh: React.FC<KnobMeshProps> = ({ params, groupRef, isSliceView }) =>
 
     // --- Shaft Hole Generation ---
     const holePath = new THREE.Path();
-    const shaftR = params.shaftDiameter / 2;
+    // Add tolerance to the radius
+    const tolerance = params.holeTolerance || 0;
+    const shaftR = (params.shaftDiameter / 2) + tolerance;
 
     if (params.shaftType === ShaftType.D_SHAFT) {
       // Calculate flat position. params.dFlatSize is "Distance from Flat to Opposite Wall"
-      // Center to Flat = dFlatSize - Radius
-      // e.g. 4.5mm - 3mm = 1.5mm from center.
-      const centerToFlat = params.dFlatSize - shaftR;
+      // Center to Flat = dFlatSize - Radius (original radius without tolerance)
+      // We apply tolerance to the hole shape, but we need to respect the flat distance definition.
+      // Ideally, the flat moves OUT by tolerance, and the circle moves OUT by tolerance.
       
-      // We place flat at BOTTOM (-Y) so it's opposite the Pointer (+Y)
-      // Flat line is at Y = -centerToFlat
-      const flatY = -centerToFlat;
+      const originalR = params.shaftDiameter / 2;
+      const centerToFlat = params.dFlatSize - originalR; 
       
+      // Adjusted Flat Y with tolerance (move it further from center)
+      const flatY = -(centerToFlat + tolerance);
+
       // Intersection X = sqrt(R^2 - y^2)
-      const xOff = Math.sqrt(shaftR * shaftR - flatY * flatY);
+      // Protect against NaN: if flatY > shaftR, clamp to 0
+      const underSqrt = shaftR * shaftR - flatY * flatY;
+      const xOff = underSqrt >= 0 ? Math.sqrt(underSqrt) : 0;
       
       // Angles
-      // We need to draw the D shape CW.
-      // Start at Right intersection, go around Top to Left intersection, then straight line back.
-      const startAngle = Math.asin(flatY / shaftR); // Approx -30deg
-      const endAngle = Math.PI - startAngle; // Approx 210deg
-      
-      // absarc(x, y, r, start, end, clockwise)
-      // To go from Right to Left via Top, we go Counter-Clockwise in standard math?
-      // But Hole must be CW for ThreeJS shape subtraction? 
-      // Actually ThreeJS Shapes: Outer CCW, Holes CW.
-      // So we want to trace the hole border Clockwise.
-      // Left Point -> Top -> Right Point -> Bottom Flat -> Left Point
+      const startAngle = Math.asin(flatY / shaftR); 
+      const endAngle = Math.PI - startAngle; 
       
       holePath.absarc(0, 0, shaftR, endAngle, startAngle, true); // CW arc
-      holePath.lineTo(xOff, flatY); // Just in case
-      holePath.lineTo(-xOff, flatY); // Close the flat
+      holePath.lineTo(xOff, flatY); 
+      holePath.lineTo(-xOff, flatY); 
       holePath.closePath();
 
     } else if (params.shaftType === ShaftType.SPLINED) {
        const teeth = 18;
        const outerR = shaftR;
-       const innerR = shaftR * 0.85;
+       // Updated to 0.9 ratio for better fit (was 0.85)
+       // We also add tolerance to the inner radius
+       const innerR = (params.shaftDiameter / 2 * 0.9) + tolerance;
+       
        for(let i=0; i<teeth * 2; i++) {
          const theta = -(i / (teeth * 2)) * Math.PI * 2; // CW
          const r = (i % 2 === 0) ? outerR : innerR;
