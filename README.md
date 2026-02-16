@@ -6,6 +6,12 @@
 
 Transform your ideas into custom 3D-printable knobs using natural language and AI. AlphaForge Knob Modeler is a cross-platform desktop application that lets you design intricate knobs for synthesizers, guitar pedals, audio equipment, and more without any 3D modeling experience.
 
+## Support
+
+Most of my work stays free and open-source.
+Support early access, live sessions, and workshop-time:
+https://www.patreon.com/Seriousshit
+
 ---
 
 ## Features
